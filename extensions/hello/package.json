@@ -1,0 +1,12 @@
+{
+  "name": "hello",
+  "publisher": "mini",
+  "displayName": "Hola Mundo",
+  "description": "Extensión de ejemplo con el formato de VS Code.",
+  "version": "1.0.0",
+  "engines": { "vscode": "^1.80.0" },
+  "main": "extension.js",
+  "contributes": {
+    "commands": [{ "command": "hello.world", "title": "Saludar", "category": "Hola" }]
+  }
+}

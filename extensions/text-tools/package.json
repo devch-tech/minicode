@@ -1,0 +1,18 @@
+{
+  "name": "text-tools",
+  "publisher": "mini",
+  "displayName": "Herramientas de texto",
+  "description": "Mayúsculas, minúsculas, contar palabras y ordenar líneas.",
+  "version": "1.0.0",
+  "engines": { "vscode": "^1.80.0" },
+  "main": "extension.js",
+  "contributes": {
+    "commands": [
+      { "command": "textTools.upper", "title": "Convertir selección a MAYÚSCULAS", "category": "Texto" },
+      { "command": "textTools.lower", "title": "Convertir selección a minúsculas", "category": "Texto" },
+      { "command": "textTools.wordCount", "title": "Contar palabras", "category": "Texto" },
+      { "command": "textTools.sortLines", "title": "Ordenar líneas", "category": "Texto" }
+    ],
+    "keybindings": [{ "command": "textTools.upper", "key": "ctrl+shift+u" }]
+  }
+}

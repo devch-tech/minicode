@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: https:; worker-src 'self' blob:"
+    />
+    <title>Mini Code</title>
+    <link rel="stylesheet" href="../node_modules/@xterm/xterm/css/xterm.css" />
+    <link rel="stylesheet" data-name="vs/editor/editor.main" href="../node_modules/monaco-editor/min/vs/editor/editor.main.css" />
+    <link rel="stylesheet" href="workbench.css" />
+  </head>
+  <body class="theme-dark">
+    <div id="workbench">
+      <nav id="activitybar">
+        <button class="activity active" data-view="explorer" title="Explorador (Ctrl+Shift+E)">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        </button>
+        <button class="activity" data-view="search" title="Buscar (Ctrl+Shift+F)">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        </button>
+        <button class="activity" data-view="extensions" title="Extensiones (Ctrl+Shift+X)">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        </button>
+      </nav>
+
+      <aside id="sidebar">
+        <section class="view" id="view-explorer">
+          <header class="view-header">
+            <span>EXPLORADOR</span>
+            <div class="view-actions">
+              <button data-cmd="file.newFile" title="Nuevo archivo">＋</button>
+              <button data-cmd="file.newFolder" title="Nueva carpeta">⊞</button>
+              <button data-cmd="explorer.refresh" title="Actualizar">⟳</button>
+              <button data-cmd="explorer.collapse" title="Contraer todo">⊟</button>
+            </div>
+          </header>
+          <div id="workspace-title" class="workspace-title"></div>
+          <div id="tree" tabindex="0"></div>
+          <div id="no-folder" class="empty">
+            <p>No hay ninguna carpeta abierta.</p>
+            <button class="primary" data-cmd="workbench.openFolder">Abrir carpeta</button>
+          </div>
+        </section>
+
+        <section class="view hidden" id="view-search">
+          <header class="view-header"><span>BUSCAR</span></header>
+          <div class="search-box">
+            <input id="search-input" placeholder="Buscar en archivos" spellcheck="false" />
+            <label class="toggle" title="Distinguir mayúsculas"><input type="checkbox" id="search-case" />Aa</label>
+          </div>
+          <div id="search-summary" class="muted"></div>
+          <div id="search-results"></div>
+        </section>
+
+        <section class="view hidden" id="view-extensions">
+          <header class="view-header">
+            <span>EXTENSIONES</span>
+            <div class="view-actions">
+              <button data-cmd="theme.select" title="Tema de color">◐</button>
+            </div>
+          </header>
+          <div class="search-box">
+            <input id="ext-search" placeholder="Buscar extensiones en Open VSX" spellcheck="false" />
+          </div>
+          <div id="ext-scroll">
+            <div class="ext-section-title" id="ext-installed-title">INSTALADAS</div>
+            <div id="ext-installed"></div>
+            <div class="ext-section-title" id="ext-market-title">POPULARES EN OPEN VSX</div>
+            <div id="ext-market"></div>
+            <button id="ext-more" class="ext-more hidden">Cargar más</button>
+          </div>
+        </section>
+      </aside>
+      <div id="sash-sidebar" class="sash vertical"></div>
+
+      <main id="main">
+        <div id="tabs"></div>
+        <div id="breadcrumbs"></div>
+        <div id="editor-host">
+          <div id="editor"></div>
+          <div id="welcome">
+            <h1>Mini Code</h1>
+            <p class="muted">Un VS Code en miniatura: Electron + Monaco + xterm.</p>
+            <ul class="shortcuts">
+              <li><kbd>Ctrl</kbd>+<kbd>O</kbd> Abrir carpeta</li>
+              <li><kbd>Ctrl</kbd>+<kbd>P</kbd> Ir a archivo</li>
+              <li><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> Paleta de comandos</li>
+              <li><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>F</kbd> Buscar en archivos</li>
+              <li><kbd>Ctrl</kbd>+<kbd>`</kbd> Terminal</li>
+              <li><kbd>Ctrl</kbd>+<kbd>S</kbd> Guardar</li>
+            </ul>
+          </div>
+        </div>
+        <div id="sash-panel" class="sash horizontal hidden"></div>
+        <section id="panel" class="hidden">
+          <header class="panel-header">
+            <span class="panel-title">TERMINAL</span>
+            <button data-cmd="terminal.clear" title="Limpiar">⌫</button>
+            <button data-cmd="workbench.togglePanel" title="Cerrar panel">✕</button>
+          </header>
+          <div id="terminal"></div>
+        </section>
+      </main>
+    </div>
+
+    <footer id="statusbar">
+      <div class="left">
+        <span id="status-folder" class="item"></span>
+        <span id="status-problems" class="item"></span>
+        <span id="status-message" class="item"></span>
+      </div>
+      <div class="right">
+        <span id="status-extensions"></span>
+        <span id="status-position" class="item"></span>
+        <span id="status-indent" class="item"></span>
+        <span class="item">UTF-8</span>
+        <span id="status-eol" class="item"></span>
+        <span id="status-language" class="item"></span>
+      </div>
+    </footer>
+
+    <div id="quick-input" class="hidden">
+      <input id="quick-input-box" spellcheck="false" />
+      <div id="quick-input-list"></div>
+    </div>
+    <div id="notifications"></div>
+
+    <script src="../node_modules/@xterm/xterm/lib/xterm.js"></script>
+    <script src="../node_modules/@xterm/addon-fit/lib/addon-fit.js"></script>
+    <script src="../node_modules/monaco-editor/min/vs/loader.js"></script>
+    <script src="workbench.js"></script>
+    <script src="extensions.js"></script>
+  </body>
+</html>
